@@ -14,7 +14,19 @@ The objective of this respository is to:
 
 # Installation
 
-(Placeholder)
+Create a virtual environment using:
+
+`python -m venv <environment-name>`
+
+Activate the virtual environment using:
+
+`source <environment-name>/bin/activate`
+
+Install the required packages
+
+`pip install -r requirements.txt`
+
+And you are ready to run the code!
 
 # Running the code
 
