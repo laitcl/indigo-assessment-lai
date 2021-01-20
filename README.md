@@ -34,6 +34,8 @@ And you are ready to run the code!
 
 # General Strategy
 
+There are notes written prior to tackling the problems. Any particular decisions made while solving the problem are directly in the code as comments
+
 ## Part 1: MySQL Database design
 
 The four main things that I will be looking to capture are primary keys, datatypes, optimizing redundancy of data, and indices.
