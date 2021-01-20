@@ -204,13 +204,70 @@ class qa_test:
         new_columns = ['crop', 'seed_variety']
         sample_seeds_table = self.data[['sample_crop','sample_seed_variety']].drop_duplicates()
         sample_seeds_table.columns = new_columns
-        print(sample_seeds_table)
+        # print(sample_seeds_table)
+        self.output_csv(sample_seeds_table, 'sample_seeds.csv')
+
+    def generate_samples_csv(self):
+        new_columns = [
+            'sample_received_by', 
+            'sample_received_by_employee_manager', 
+            'sample_received_by_employee_team', 
+            'irp_qa_sample_barcode',
+            'sample_taken_from_farm', 
+            'sample_treatment_name', 
+            'sample_crop', 
+            'sample_seed_variety',
+            'date_received_at_qa', 
+            'date_sample_taken',
+            'date_treated', 
+            'sample_date_planted',
+            'days_between_treatment_and_planting', 
+            'is_qa_needed',
+            'id'
+            ]
+
+        samples_table = self.data[new_columns]
+        self.output_csv(samples_table, 'samples.csv')
+
+    def generate_qa_tests_csv(self):
+        new_columns = [
+            'sample_tested_by', 
+            'sample_tested_by_employee_manager',
+            'sample_tested_by_employee_team', 
+            'chemical_treatment_visible',
+            'testing_date_plated', 
+            'plating_code', 
+            'seeds_g',
+            'mass_seed_extracted_g', 
+            'plated_volume_mL',  
+            'comment', 
+            'id']
+
+        qa_tests_table = self.data[new_columns]
+        qa_tests_table = qa_tests_table.rename(columns={'id':'sample_id'})
+        self.output_csv(qa_tests_table, 'qa_tests.csv')
+
+    def generate_colony_forming_units_csv(self):
+        new_columns = [
+            'cfu_seed_1x',
+            'cfu_seed_10x', 
+            'cfu_seed_100x', 
+            'cfu_seed_1000x',
+            'average_cfu_per_seed',
+            'id']
+
+        cfu_table = self.data[new_columns]
+        cfu_table = cfu_table.rename(columns={'id':'sample_id'})
+        self.output_csv(cfu_table, 'colony_forming_units.csv')
 
     def create_csvs(self):
         self.validate_columns()
         self.csv_path = str(PROJECT_DIR) + '/csv_outputs/' 
         self.generate_employees_csv()
         self.generate_sample_seeds_csv()
+        self.generate_samples_csv()
+        self.generate_qa_tests_csv()
+        self.generate_colony_forming_units_csv()
 
 def main():
     # Input order is filename, sheet name

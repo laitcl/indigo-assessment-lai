@@ -11,12 +11,16 @@ CREATE TABLE research.employees (
   PRIMARY KEY (id)
 );
 
+-- This line ensures when new employees are pushed to the database, new employee/manager/team combinations are not duplicated
+ALTER TABLE research.employees ADD CONSTRAINT employees UNIQUE(name, manager, team);
+
 -- ----------------------------
 -- Indexes for employees
 -- ----------------------------
 CREATE INDEX employee_name_idx ON research.employees (name); -- I index all three columns here since it would conceivable that each of them would be subject to filtering
 CREATE INDEX employee_manager_idx ON research.employees (manager); 
 CREATE INDEX employee_team_idx ON research.employees (team); 
+
 
 
 -- ----------------------------
@@ -31,8 +35,11 @@ CREATE TABLE research.sample_seeds (
   PRIMARY KEY (id)
 );
 
+-- This line ensures when new employees are pushed to the database, new employee/manager/team combinations are not duplicated
+ALTER TABLE research.sample_seeds ADD CONSTRAINT employees UNIQUE(crop, seed_variety);
+
 -- ----------------------------
--- Indexes for qa_tests
+-- Indexes for sample_seeds
 -- ----------------------------
 CREATE INDEX sample_seed_crop_idx ON research.sample_seeds (crop); 
 CREATE INDEX sample_seed_variety_idx ON research.sample_seeds (seed_variety); 
