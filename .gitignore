@@ -131,3 +131,6 @@ dmypy.json
 # Virtual environment files
 indigo-env/
 activate
+
+# Data files should be ignored
+*.xlsx
