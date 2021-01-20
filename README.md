@@ -149,16 +149,19 @@ There are notes written prior to tackling the problems. Any particular decisions
 
 ## Part 1: MySQL Database design
 
-The four main things that I will be looking to capture are primary keys, datatypes, optimizing redundancy of data, and indices.
+The four main things that I will be looking to capture are primary keys, datatypes, abstraction of data types, and indices.
 
 /*:
   1. It appears that each experiment cannot be uniquely identified only using one column of data. As mentioned in the prompt, the combination of a barcode and date_received are required to uniquely identify a row. In this implementation, a primary key should be added to enable unique identification of each row. This can be done by adding a serial ID to each row when imported, or by adding a hashed primary key by hasing together the combination of the two unique rows. I will opt to do the latter, since the primary key will hold some significance, and can be reverse hashed into meaningful information.
+  
   2. While there are fields that have very obvious datatypes (such as dates (date) and barcodes (strings)), some are counterintuitive. For example, `Mass Seed Extracted` fields record `3g`, instead of having the units stored in the header, and the field should be a decimal number. Another example would be `CFU/seed 1x`, where normally we would expect a decimal, but TCTC is a possible entry. Here, are choice is to either store these fields as varchars or as decimals, where TCTC would be converted to an arbitrarily large value. The former has the advantage that these values can be kept in their original appearance, and there is no need to store arbitrary values, whereas the latter would be easier to query from (it's hard to query value > 500 for varchars, whereas it would be relatively straightforward for a decimal). In these cases I will opt for the `varchar`, just out of personal preference. In reality, it would be a conversation to have with the end users of this data on what is actually important.
-  3. Optimizing redundant data: There are at least two sets of columns where data would be highly redundant. They are the sample received by, employee manager, and employee team (also the tested by counterpart of the same columns). Employee data definitely belongs to another table, and these columns can be reduced to two foreign keys (received_by and tested_by). Another field where this is possible is the `sample_crop` and `Sample seed_variety`; it's not far of a stretch to say one sample_seed_variety should only result in one sample_crop, so I will consolidating these fields too. I will be adding primary keys to both the employee and sample_seeds tables to allow this referencing.
+  
+  3. There are a few classes of columns, the most obvious one being the employee columns, should belong to a separate table. The general sign for columns that could be abstracted into new tables is that there is a many-to-one relationship between a column's data and a row. In this example, there are only a few employees involved in this qa_testing, but their names are repeatedly duplicated across all the rows. By abstracting employees to a separate table, the employee's information does not have to be duplicated across all the rows. In this project, I also account for things that can become many-to-one relationships in the future; for example, a multiple qa tests can be done on one sample, and therefore I've separated qa_tests and samples into two distinct tables. CFU counts can be done multiple times for one qa test, and therefore I've chosen to abstract CFU's to its own table. Special note on CFUs is that I now choose to store them in a transactional table, where each row is one count, and the row has information as to what type of count (e.g. 1x vs 1000x); this also allows CFU counts to be done different number of times for each different method; this could save up on many empty rows.
+
   4. Table indexing should be done to ensure that the data can be easily searched. This is best done by having a conversation with the end users of the data to figure out what are the most common query constraints, but since I am a solo contributor to this, I will making a few examples just to highlight the recommended indicies.
 */
 
-There are also a few general etiquette things to ensure. Plural table names, singular column names, all that stuff. Hopefully I don't miss anything.
+There are also a few general etiquette things to ensure. Plural table names, singular column names, foreign keys should be in {table_name_id}, etc. Hopefully I don't miss anything.
 
 ## Part 2: Python Script
 
@@ -176,7 +179,9 @@ Another previously mentioned thing is that I will be hashing together `irp_qa_sa
 
 ## Part 3: Querying for information
 
-I will include a standalone .sql file in the src/ directory to show this query, alongside comments if neccesary.
+I will include a standalone .sql file in the src/ directory to show this query.
+
+The method that I have chosen to use is to use subqueries to isolate the average CFU counts in the correct month and employee team, and then use a final query to count the number of rows that result from these subqueries.
 
 ## Part 4: Validation Class
 
@@ -185,6 +190,8 @@ I've thought carefully, and I think this will be done in conjunction with part 2
 The plan is to write a Python class, where a pandas dataframe is an attribute of this class. After the cleaning and manipulations, a generate CSV function will be run, where the saved dataframe will be proceed into CSVs. In this CSV generation function, a few functions that belong to this class will run, including all the validation checks included in this part.
 
 Test suites such as PyTest and miniTest may not be ideal for this because these tests actually involve testing data used for production, whereas these test suites function best when used with dummy data, and testing for specific functions.
+
+I've chosen to do additional validation checks for two columns: they are the days_between_treatment_and_planting, and average_cfus. These columns are technically derived from other columns in the spreadsheet, and they should be checked for consistency. Granted, the average cfus no longer get recorded to the database, but I think this is a good check for the spreadsheet integrity.
 
 # Credits
 
