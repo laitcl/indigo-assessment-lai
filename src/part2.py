@@ -248,7 +248,7 @@ class qa_test:
         self.output_csv(qa_tests_table, 'qa_tests.csv')
 
     def generate_colony_forming_units_csv(self):
-        new_columns = [
+        columns = [
             'cfu_seed_1x',
             'cfu_seed_10x', 
             'cfu_seed_100x', 
@@ -256,8 +256,27 @@ class qa_test:
             'average_cfu_per_seed',
             'id']
 
-        cfu_table = self.data[new_columns]
-        cfu_table = cfu_table.rename(columns={'id':'sample_id'})
+        new_columns = [
+            'count',
+            'TCTC',
+            'count_type',
+            'sample_id'
+        ]
+
+        new_cfu_table = []
+
+        for index, row in self.data.iterrows():
+            for i,c in enumerate(['cfu_seed_1x', 'cfu_seed_10x', 'cfu_seed_100x', 'cfu_seed_1000x']):
+                if isinstance(row[c], int) or isinstance(row[c], float):
+                    if math.isnan(row[c]):
+                        new_row = ["", False, c, row['id']]
+                    else:
+                        new_row = [int(row[c]), False, c, row['id']]
+                else: 
+                    new_row = ["", True, c, row['id']]
+                new_cfu_table.append(new_row)
+        cfu_table=pd.DataFrame(new_cfu_table, columns = new_columns)
+        # print(cfu_table)
         self.output_csv(cfu_table, 'colony_forming_units.csv')
 
     def create_csvs(self):
