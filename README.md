@@ -30,7 +30,17 @@ And you are ready to run the code!
 
 # Running the code
 
-(Placeholder)
+The code can be run by using:
+
+`python src/part2.py <excel file name> <sheet name>`
+
+For example:
+
+`python src/part2.py assets/seed_qa_tests.xlsx irp_qa_samples`
+
+If an excel file name is not supplied, the default file and sheet names will be assumed to be `assets/seed_qa_tests.xlsx` and `irp_qa_samples`
+
+Running the script will output csv files in the directory `csv_outputs/`
 
 # General Strategy
 
