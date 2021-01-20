@@ -281,7 +281,7 @@ class qa_test:
             for i, c in enumerate(['cfu_seed_1x', 'cfu_seed_10x', 'cfu_seed_100x', 'cfu_seed_1000x']):
                 if isinstance(row[c], int) or isinstance(row[c], float):
                     if math.isnan(row[c]):
-                        new_row = ["", False, c, row['id']]
+                        continue
                     else:
                         new_row = [int(row[c]), False, c, row['id']]
                 else:
