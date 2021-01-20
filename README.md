@@ -124,7 +124,7 @@ seeds_g,
 mass_seed_extracted_g, 
 plated_volume_mL,  
 comment, 
-sample_idid)
+sample_id)
 SELECT 
 (employee_id, 
   chemical_treatment_visible,
@@ -138,7 +138,10 @@ SELECT
 FROM joined_table;
 ```
 
--- In this last step, we do a little bit of pre-joining before the insertion to make sure that the employee_ids and the qa_tests match up. There is no need to join the samples_id currently, because that is figured out during the python code. In a world where we may be rerunning a qa_test for the same sample, we would just allow a second entry with the same sample_id to be pushed to create the many_to_one relationship between qa_tests and samples.
+In this last step, we do a little bit of pre-joining before the insertion to make sure that the employee_ids and the qa_tests match up. There is no need to join the samples_id currently, because that is figured out during the python code. In a world where we may be rerunning a qa_test for the same sample, we would just allow a second entry with the same sample_id to be pushed to create the many_to_one relationship between qa_tests and samples.
+
+
+On the note of the colony_forming_units table: this table's been restructured from its original appearance. See my explanation on src/part1.sql why this took place. These changes should have been reflected in the csv file, and a normal push similar to the qa_tests table should suffice.
 
 # General Strategy
 
